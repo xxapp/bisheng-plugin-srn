@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Demo</title>
+    <!-- <link rel="stylesheet" href="../index.css" /> -->
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: none;
+      }
+      {{ style }}
+    </style>
+  </head>
+  <body>
+    <div id="react-app"></div>
+    <script>
+      function require(module) {
+        if (module === 'react-router') {
+          return window.ReactRouter;
+        }
+        if (module === 'react-router-dom') {
+          return window.ReactRouterDOM;
+        }
+        return window.parent[module];
+      }
+      var React = window['react'] = require('react');
+      window['prop-types'] = window.parent['prop-types'];
+      window['lodash'] = window.parent['lodash'];
+    </script>
+    <script src="./demo/examples.js"></script>
+    <script>
+      var examples = window['examples'].default, ExampleComponent;
+      for (var i in examples) {
+        var example = examples[i][0];
+        if (examples.hasOwnProperty(i) && example.id === '{{ id }}') {
+          ExampleComponent = example.component;
+          break;
+        }
+      }
+
+      var Example = function Example() {
+        this.render = function () {
+          return React.createElement(
+            ReactNative.View,
+            { style: styles.container },
+            React.createElement(ExampleComponent, null)
+          );
+        }
+      }
+      Example.prototype = React.Component.prototype;
+      Example.prototype.constructor = Example;
+
+      var styles = ReactNative.StyleSheet.create({
+        container: {
+          backgroundColor: '#f2f2f2',
+        },
+      });
+
+      ReactNative.AppRegistry.registerComponent('ReactNativeWeb', function () {
+        return Example;
+      });
+      ReactNative.AppRegistry.runApplication('ReactNativeWeb', { rootTag: document.getElementById('react-app') });
+    </script>
+  </body>
+</html>
